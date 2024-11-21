@@ -1,4 +1,4 @@
-package com.security.services;
+package com.security.pojo;
 
 public class Student {
     private int id;
