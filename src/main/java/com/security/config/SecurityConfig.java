@@ -24,8 +24,8 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
-//    @Autowired
-//    private JwtFilter jwtFilter;
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,7 +47,8 @@ public class SecurityConfig {
 //        Every time we need to pass credentials while we access new resources
         .sessionManagement(
                 session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//               .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+
+               .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
     }
 
