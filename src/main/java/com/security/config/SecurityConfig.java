@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -45,27 +45,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider= new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
 
+//        Add the passwordEncoder
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
 //        our own userDetailsService
         provider.setUserDetailsService(userDetailsService);
         return provider;
     }
-//    @Bean
-//    public UserDetailsService userDetailsService(){
-//        UserDetails user1=User
-//                .withDefaultPasswordEncoder()
-//                .username("vrish")
-//                .password("vrish")
-//                .roles("admin")
-//                .build();
-//        UserDetails user2=User
-//                .withDefaultPasswordEncoder()
-//                .username("janane")
-//                .password("janane")
-//                .roles("admin")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(user1,user2);
-//    }
 }
