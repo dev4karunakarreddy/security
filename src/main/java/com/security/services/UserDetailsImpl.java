@@ -1,5 +1,6 @@
-package com.security.Entity;
+package com.security.services;
 
+import com.security.Entity.Users;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,7 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
-    private Users user;
+    private final Users user;
     public UserDetailsImpl(Users user) {
         this.user=user;
     }

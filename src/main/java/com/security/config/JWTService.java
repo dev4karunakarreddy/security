@@ -1,8 +1,10 @@
 package com.security.config;
 
+import com.security.exceptions.InvalidToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
@@ -18,7 +20,6 @@ import java.util.function.Function;
 public class JWTService {
 
     private String key = "";
-
     public JWTService() {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
@@ -31,14 +32,11 @@ public class JWTService {
 
     public String getToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
-
-        claims.put("username", userName);
-
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userName)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 30))
+                .claims(claims)
+                .subject(userName)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30))
                 .signWith(getKey())
                 .compact();
     }
@@ -58,9 +56,18 @@ public class JWTService {
     }
 
     public Claims extractAllClaims(String token){
-        return Jwts.parserBuilder()
-                .setSigningKey(getKey())
-                .build().parseClaimsJws(token).getBody();
+        try{
+            return Jwts.parser()
+                    .verifyWith(getKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        }catch (SignatureException e){
+            throw new InvalidToken("JWT signature does not match locally computed signature");
+        }catch (Exception e){
+            throw new InvalidToken("Invalid JWT token.");
+        }
+
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
